@@ -1,6 +1,6 @@
-import { Entity } from "@/core/entities/entity"
-import { Optional } from "@/core/types/optional"
-import { UniqueEntityID } from "@/core/entities/unique-entity-id"
+import { Entity } from '@/core/entities/entity'
+import { Optional } from '@/core/types/optional'
+import { UniqueEntityID } from '@/core/entities/unique-entity-id'
 
 interface IAnswerProps {
   authorId: UniqueEntityID
@@ -23,6 +23,11 @@ export class Answer extends Entity<IAnswerProps> {
     return this.props.content
   }
 
+  set content(content: string) {
+    this.props.content = content
+    this.touch()
+  }
+
   get createdAt() {
     return this.props.createdAt
   }
@@ -32,19 +37,17 @@ export class Answer extends Entity<IAnswerProps> {
   }
 
   get excerpt() {
-    return this.content.substring(0,120).trimEnd().concat('...')
+    return this.content.substring(0, 120).trimEnd().concat('...')
   }
 
   private touch() {
     this.props.updatedAt = new Date()
   }
 
-  set content(content: string) {
-    this.props.content = content
-    this.touch()
-  }
-  
-  static create(props: Optional<IAnswerProps, 'createdAt'>, id?: UniqueEntityID) {
+  static create(
+    props: Optional<IAnswerProps, 'createdAt'>,
+    id?: UniqueEntityID,
+  ) {
     return new Answer({ ...props, createdAt: new Date() }, id)
   }
 }
