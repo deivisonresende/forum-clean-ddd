@@ -1,0 +1,19 @@
+{
+  "name": "forum-clean-ddd",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.5.0",
+    "typescript": "^5.1.6",
+    "vite-tsconfig-paths": "^4.2.1",
+    "vitest": "^0.34.1"
+  }
+}
