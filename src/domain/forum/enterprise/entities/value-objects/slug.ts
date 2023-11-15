@@ -1,3 +1,4 @@
+
 export class Slug {
   public value: string
 

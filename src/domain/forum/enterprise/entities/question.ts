@@ -67,17 +67,14 @@ export class Question extends Entity<QuestionProps> {
     this.props.updatedAt = new Date()
   }
 
-  static create(
-    props: Optional<QuestionProps, 'createdAt' | 'slug'>,
-    id?: UniqueEntityID,
-  ) {
+  static create(props: Optional<QuestionProps, 'createdAt' | 'slug'>, id?: UniqueEntityID) {
     const question = new Question(
       {
         ...props,
         slug: props.slug ?? Slug.createFromText(props.title),
-        createdAt: new Date(),
+        createdAt: new Date()
       },
-      id,
+      id
     )
 
     return question
