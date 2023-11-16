@@ -11,11 +11,7 @@ interface IAnswerQuestionUseCaseParams {
 export class AnswerQuestionUseCase {
   constructor(private answersRepository: AnswersRepository) { }
 
-  async execute({
-    content,
-    questionId,
-    instructorId,
-  }: IAnswerQuestionUseCaseParams) {
+  async execute({ content, questionId, instructorId }: IAnswerQuestionUseCaseParams) {
     const answer = Answer.create({
       content,
       questionId: new UniqueEntityID(questionId),
