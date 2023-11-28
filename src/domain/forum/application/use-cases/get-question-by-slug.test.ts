@@ -1,6 +1,7 @@
 import { GetQuestionBySlugUseCase } from './get-question-by-slug'
 import { InMemoryQuestionsRepository } from 'test/repositories/in-memory-questions-repository'
 import { Slug } from '../../enterprise/entities/value-objects/slug'
+import { faker } from '@faker-js/faker'
 import { makeQuestion } from 'test/factories/make-question'
 
 let inMemoryQuestionsRepository: InMemoryQuestionsRepository
@@ -31,5 +32,9 @@ describe('Get question by slug use case', () => {
     expect(question.slug).toHaveProperty('value')
     expect(question.slug.value).toEqual(Slug.createFromText(newQuestion.title).value)
   })
-})
 
+  it('should throw an error when the question does not found', async () =>
+    expect(async () => await SUT.execute({ slug: faker.lorem.slug() }))
+      .rejects.toThrowError('Pergunta não encontrada.')
+  )
+})
