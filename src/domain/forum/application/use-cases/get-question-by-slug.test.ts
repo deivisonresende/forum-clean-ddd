@@ -6,7 +6,7 @@ import { makeQuestion } from 'test/factories/make-question'
 let inMemoryQuestionsRepository: InMemoryQuestionsRepository
 let SUT: GetQuestionBySlugUseCase
 
-describe('Create Question', () => {
+describe('Get question by slug use case', () => {
   beforeEach(() => {
     inMemoryQuestionsRepository = new InMemoryQuestionsRepository()
     SUT = new GetQuestionBySlugUseCase(inMemoryQuestionsRepository)
@@ -18,7 +18,7 @@ describe('Create Question', () => {
 
     inMemoryQuestionsRepository.create(newQuestion)
 
-    const { question } = await SUT.execute({ slug: 'example-question' })
+    const { question } = await SUT.execute({ slug: newQuestion.slug.value })
 
     expect(inMemoryQuestionsRepository.questions).toHaveLength(1)
     expect(question).toHaveProperty('id')
