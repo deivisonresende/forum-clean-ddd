@@ -3,7 +3,6 @@ import { InMemoryQuestionsRepository } from 'test/repositories/in-memory-questio
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
 import { faker } from '@faker-js/faker'
 import { makeQuestion } from 'test/factories/make-question'
-import { rejects } from 'assert'
 
 let inMemoryQuestionsRepository: InMemoryQuestionsRepository
 let SUT: DeleteQuestionUseCase

@@ -24,4 +24,11 @@ export class InMemoryQuestionsRepository implements QuestionsRepository {
 
     if(indexOfTarget !== -1) this.questions.splice(indexOfTarget, amountToDelete)
   }
+
+  async updateOne(questionId: string, body: Question): Promise<void> {
+    const indexOfTarget = this.questions.findIndex(q => q.id.toString() === questionId)
+
+    if(indexOfTarget !== -1) this.questions[indexOfTarget] = body
+
+  }
 }

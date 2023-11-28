@@ -5,4 +5,5 @@ export interface QuestionsRepository {
   findBySlug(slug: string): Promise<Question | undefined>
   findById(questionId: string): Promise<Question | undefined>
   deleteOne(questionId: string): Promise<void>
+  updateOne(questionId: string, body: Question): Promise<void>
 }
