@@ -29,6 +29,5 @@ export class InMemoryQuestionsRepository implements QuestionsRepository {
     const indexOfTarget = this.questions.findIndex(q => q.id.toString() === questionId)
 
     if(indexOfTarget !== -1) this.questions[indexOfTarget] = body
-
   }
 }

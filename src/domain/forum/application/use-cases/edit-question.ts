@@ -29,6 +29,6 @@ export class EditQuestionUseCase {
 
     await this.questionsRepository.updateOne(questionId, questionFound)
 
-    return { question: questionFound}
+    return { question: questionFound }
   }
 }

@@ -20,4 +20,10 @@ export class InMemoryAnswersRepository implements AnswersRepository {
 
     if (indexOfTarget !== -1) this.answers.splice(indexOfTarget, amountToDelete)
   }
+
+  async updateOne(answerId: string, body: Answer): Promise<void> {
+    const indexOfTarget = this.answers.findIndex(q => q.id.toString() === answerId)
+
+    if(indexOfTarget !== -1) this.answers[indexOfTarget] = body
+  }
 }
