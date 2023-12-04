@@ -8,9 +8,12 @@ export class InMemoryQuestionsRepository extends Repository<Question> implements
     return this.items.find(q => q.slug.value === slug)
   }
 
-  async findManyRecent({ page }: IPaginationParams): Promise<Question[]> {
+  async findManyRecent({ page, amountItems = 20 }: IPaginationParams): Promise<Question[]> {
     const sortedQuestions = this.sortByCreatedAt(this.items, 'desc')
 
-    return sortedQuestions.slice((page - 1) * 20, page * 20)
+    const selectStart = (page - 1) * amountItems
+    const selectEnd = page * amountItems
+
+    return sortedQuestions.slice(selectStart, selectEnd)
   }
 }
