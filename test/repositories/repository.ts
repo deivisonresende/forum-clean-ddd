@@ -8,6 +8,13 @@ interface IGenericProps{
 export class Repository<T extends IGenericProps> {
   public items: T[] = []
 
+  toPaginated(items: T[], page: number, amountItems = 20): T[] {
+    const selectStart = (page - 1) * amountItems
+    const selectEnd = page * amountItems
+
+    return items.slice(selectStart, selectEnd)
+  }
+
   sortByCreatedAt(items: T[], order: 'asc' | 'desc') {
     const sortCallBack = order === 'asc'
       ? (a: T, b: T) => a.createdAt.getTime() - b.createdAt.getTime()
