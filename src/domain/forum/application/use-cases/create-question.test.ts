@@ -18,7 +18,7 @@ describe('Create Question', () => {
       content: 'this is my question'
     })
 
-    expect(inMemoryQuestionsRepository.questions).toHaveLength(1)
+    expect(inMemoryQuestionsRepository.items).toHaveLength(1)
     expect(question).toHaveProperty('id')
     expect(question.id).toBeTruthy()
     expect(question).toHaveProperty('title')

@@ -1,33 +1,16 @@
+import { IPaginationParams } from "@/core/repositories/pagination-params"
 import { Question } from "@/domain/forum/enterprise/entities/question"
 import { QuestionsRepository } from "@/domain/forum/application/repositories/questions-repository"
+import { Repository } from "./repository"
 
-export class InMemoryQuestionsRepository implements QuestionsRepository {
-  public questions: Question[] = []
-
-  async create(question: Question): Promise<Question> {
-    this.questions.push(question)
-
-    return question
-  }
-
+export class InMemoryQuestionsRepository extends Repository<Question> implements QuestionsRepository {
   async findBySlug(slug: string): Promise<Question | undefined> {
-    return this.questions.find(q => q.slug.value === slug)
+    return this.items.find(q => q.slug.value === slug)
   }
 
-  async findById(questionId: string): Promise<Question | undefined> {
-    return this.questions.find(q => q.id.toString() === questionId)
-  }
+  async findManyRecent({ page }: IPaginationParams): Promise<Question[]> {
+    const sortedQuestions = this.sortByCreatedAt(this.items, 'desc')
 
-  async deleteOne(questionId: string): Promise<void> {
-    const indexOfTarget = this.questions.findIndex(q => q.id.toString() === questionId)
-    const amountToDelete = 1
-
-    if(indexOfTarget !== -1) this.questions.splice(indexOfTarget, amountToDelete)
-  }
-
-  async updateOne(questionId: string, body: Question): Promise<void> {
-    const indexOfTarget = this.questions.findIndex(q => q.id.toString() === questionId)
-
-    if(indexOfTarget !== -1) this.questions[indexOfTarget] = body
+    return sortedQuestions.slice((page - 1) * 20, page * 20)
   }
 }

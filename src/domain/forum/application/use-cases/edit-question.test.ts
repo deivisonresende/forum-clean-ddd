@@ -29,14 +29,14 @@ describe('Edit question use case', () => {
       content
     })
 
-    expect(inMemoryQuestionsRepository.questions[0]).toHaveProperty('id')
-    expect(inMemoryQuestionsRepository.questions[0].id.toString()).toEqual(newQuestion.id.toString())
-    expect(inMemoryQuestionsRepository.questions[0]).toHaveProperty('title')
-    expect(inMemoryQuestionsRepository.questions[0].title).toEqual(title)
-    expect(inMemoryQuestionsRepository.questions[0]).toHaveProperty('content')
-    expect(inMemoryQuestionsRepository.questions[0].content).toEqual(content)
-    expect(inMemoryQuestionsRepository.questions[0]).toHaveProperty('slug')
-    expect(inMemoryQuestionsRepository.questions[0].slug.value).toEqual(Slug.createFromText(title).value)
+    expect(inMemoryQuestionsRepository.items[0]).toHaveProperty('id')
+    expect(inMemoryQuestionsRepository.items[0].id.toString()).toEqual(newQuestion.id.toString())
+    expect(inMemoryQuestionsRepository.items[0]).toHaveProperty('title')
+    expect(inMemoryQuestionsRepository.items[0].title).toEqual(title)
+    expect(inMemoryQuestionsRepository.items[0]).toHaveProperty('content')
+    expect(inMemoryQuestionsRepository.items[0].content).toEqual(content)
+    expect(inMemoryQuestionsRepository.items[0]).toHaveProperty('slug')
+    expect(inMemoryQuestionsRepository.items[0].slug.value).toEqual(Slug.createFromText(title).value)
   })
 
 

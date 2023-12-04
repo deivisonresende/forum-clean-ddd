@@ -18,12 +18,12 @@ describe('Delete Question Use Case', () => {
 
     inMemoryQuestionsRepository.create(question)
 
-    const countQuestionsBefore = inMemoryQuestionsRepository.questions.length
+    const countQuestionsBefore = inMemoryQuestionsRepository.items.length
 
     await SUT.execute({ questionId: question.id.toString(), authorId: 'author-1' })
 
     expect(countQuestionsBefore).toBe(1)
-    expect(inMemoryQuestionsRepository.questions).toHaveLength(0)
+    expect(inMemoryQuestionsRepository.items).toHaveLength(0)
   })
 
 

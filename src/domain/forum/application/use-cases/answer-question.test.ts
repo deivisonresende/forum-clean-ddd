@@ -27,15 +27,15 @@ describe('Answer question use case', () => {
       content: 'new answer'
     })
 
-    expect(inMemoryAnswersRepository.answers).toHaveLength(1)
-    expect(inMemoryAnswersRepository.answers[0]).toHaveProperty('id')
-    expect(inMemoryAnswersRepository.answers[0].id.toString()).toEqual(answer.id.toString())
-    expect(inMemoryAnswersRepository.answers[0]).toHaveProperty('authorId')
-    expect(inMemoryAnswersRepository.answers[0].authorId.toString()).toEqual(answer.authorId.toString())
-    expect(inMemoryAnswersRepository.answers[0]).toHaveProperty('questionId')
-    expect(inMemoryAnswersRepository.answers[0].questionId.toString()).toEqual(answer.questionId.toString())
-    expect(inMemoryAnswersRepository.answers[0]).toHaveProperty('content')
-    expect(inMemoryAnswersRepository.answers[0].content).toEqual(answer.content)
+    expect(inMemoryAnswersRepository.items).toHaveLength(1)
+    expect(inMemoryAnswersRepository.items[0]).toHaveProperty('id')
+    expect(inMemoryAnswersRepository.items[0].id.toString()).toEqual(answer.id.toString())
+    expect(inMemoryAnswersRepository.items[0]).toHaveProperty('authorId')
+    expect(inMemoryAnswersRepository.items[0].authorId.toString()).toEqual(answer.authorId.toString())
+    expect(inMemoryAnswersRepository.items[0]).toHaveProperty('questionId')
+    expect(inMemoryAnswersRepository.items[0].questionId.toString()).toEqual(answer.questionId.toString())
+    expect(inMemoryAnswersRepository.items[0]).toHaveProperty('content')
+    expect(inMemoryAnswersRepository.items[0].content).toEqual(answer.content)
   })
 
   it('should throw an error when the question does not found', async () =>

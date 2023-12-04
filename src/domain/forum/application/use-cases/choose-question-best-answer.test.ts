@@ -29,13 +29,13 @@ describe('Answer question use case', () => {
       answerId: bestAnswer.id.toString()
     })
 
-    expect(inMemoryQuestionsRepository.questions).toHaveLength(1)
-    expect(inMemoryQuestionsRepository.questions[0]).toHaveProperty('id')
-    expect(inMemoryQuestionsRepository.questions[0].id.toString()).toEqual(question.id.toString())
-    expect(inMemoryQuestionsRepository.questions[0]).toHaveProperty('authorId')
-    expect(inMemoryQuestionsRepository.questions[0].authorId.toString()).toEqual(question.authorId.toString())
-    expect(inMemoryQuestionsRepository.questions[0]).toHaveProperty('bestAnswerId')
-    expect(inMemoryQuestionsRepository.questions[0].bestAnswerId?.toString()).toEqual(bestAnswer.id.toString())
+    expect(inMemoryQuestionsRepository.items).toHaveLength(1)
+    expect(inMemoryQuestionsRepository.items[0]).toHaveProperty('id')
+    expect(inMemoryQuestionsRepository.items[0].id.toString()).toEqual(question.id.toString())
+    expect(inMemoryQuestionsRepository.items[0]).toHaveProperty('authorId')
+    expect(inMemoryQuestionsRepository.items[0].authorId.toString()).toEqual(question.authorId.toString())
+    expect(inMemoryQuestionsRepository.items[0]).toHaveProperty('bestAnswerId')
+    expect(inMemoryQuestionsRepository.items[0].bestAnswerId?.toString()).toEqual(bestAnswer.id.toString())
   })
 
   it('should throw an error when the answer does not found', async () =>

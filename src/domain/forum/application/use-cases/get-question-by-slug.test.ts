@@ -21,7 +21,7 @@ describe('Get question by slug use case', () => {
 
     const { question } = await SUT.execute({ slug: newQuestion.slug.value })
 
-    expect(inMemoryQuestionsRepository.questions).toHaveLength(1)
+    expect(inMemoryQuestionsRepository.items).toHaveLength(1)
     expect(question).toHaveProperty('id')
     expect(question.id).toBeTruthy()
     expect(question).toHaveProperty('title')

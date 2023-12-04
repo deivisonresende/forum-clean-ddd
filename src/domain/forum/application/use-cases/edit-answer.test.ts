@@ -26,10 +26,10 @@ describe('Edit answer use case', () => {
       content
     })
 
-    expect(inMemoryAnswersRepository.answers[0]).toHaveProperty('id')
-    expect(inMemoryAnswersRepository.answers[0].id.toString()).toEqual(newAnswer.id.toString())
-    expect(inMemoryAnswersRepository.answers[0]).toHaveProperty('content')
-    expect(inMemoryAnswersRepository.answers[0].content).toEqual(content)
+    expect(inMemoryAnswersRepository.items[0]).toHaveProperty('id')
+    expect(inMemoryAnswersRepository.items[0].id.toString()).toEqual(newAnswer.id.toString())
+    expect(inMemoryAnswersRepository.items[0]).toHaveProperty('content')
+    expect(inMemoryAnswersRepository.items[0].content).toEqual(content)
   })
 
 
