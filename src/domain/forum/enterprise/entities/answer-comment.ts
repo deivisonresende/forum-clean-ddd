@@ -3,7 +3,7 @@ import { Comment, ICommentProps } from './comment'
 import { Optional } from '@/core/types/optional'
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
 
-interface IAnswerCommentProps extends ICommentProps {
+export interface IAnswerCommentProps extends ICommentProps {
   answerId: UniqueEntityID
 }
 
