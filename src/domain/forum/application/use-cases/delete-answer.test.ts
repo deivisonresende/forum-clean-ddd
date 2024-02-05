@@ -3,6 +3,8 @@ import { InMemoryAnswersRepository } from 'test/repositories/in-memory-answers-r
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
 import { faker } from '@faker-js/faker'
 import { makeAnswer } from 'test/factories/make-answer'
+import { NotAllowedError } from '../errors/not-allowed-error copy'
+import { ResourceNotFoundError } from '../errors/resource-not-found-error'
 
 let inMemoryAnswersRepository: InMemoryAnswersRepository
 let SUT: DeleteAnswerUseCase
@@ -32,13 +34,18 @@ describe('Delete Answer Use Case', () => {
 
     inMemoryAnswersRepository.create(answer)
 
-    expect(async () => await SUT.execute({ answerId: answer.id.toString(), authorId: 'author-2' }))
-      .rejects.toThrow('Não é permitido apagar respostas de outros autores.')
+    const result = await SUT.execute({ answerId: answer.id.toString(), authorId: 'author-2' })
+
+    expect(result.isLeft()).toBe(true)
+    expect(result.value).toBeInstanceOf(NotAllowedError)
   })
 
-  it('should throw an error when the answer does not found', async () =>
-    expect(async () => await SUT.execute({ answerId: faker.lorem.text(), authorId: '1' }))
-      .rejects.toThrowError('Resposta não encontrada.')
-  )
+  it('should throw an error when the answer does not found', async () => {
+
+    const result = await SUT.execute({ answerId: faker.lorem.text(), authorId: '1' })
+
+    expect(result.isLeft()).toBe(true)
+    expect(result.value).toBeInstanceOf(ResourceNotFoundError)
+  })
 })
 

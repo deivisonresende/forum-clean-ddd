@@ -1,6 +1,9 @@
+import { Either, left, right } from '@/core/either'
+
 import { QuestionComment } from '../../enterprise/entities/question-comment'
 import { QuestionCommentsRepository } from '../repositories/question-comments-repository'
 import { QuestionsRepository } from '../repositories/questions-repository'
+import { ResourceNotFoundError } from '../errors/resource-not-found-error'
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
 
 interface ICommentOnQuestionUseCaseParams {
@@ -9,10 +12,10 @@ interface ICommentOnQuestionUseCaseParams {
   content: string
 }
 
-interface ICommentOnQuestionUseCaseResponse {
-  comment: QuestionComment
-}
-
+type CommentOnQuestionUseCaseResponse = Either<
+  ResourceNotFoundError,
+  { comment: QuestionComment }
+>
 
 export class CommentOnQuestionUseCase {
   constructor(
@@ -20,9 +23,9 @@ export class CommentOnQuestionUseCase {
     private questionCommentsRepository: QuestionCommentsRepository
   ) { }
 
-  async execute({ authorId, questionId, content }: ICommentOnQuestionUseCaseParams): Promise<ICommentOnQuestionUseCaseResponse> {
+  async execute({ authorId, questionId, content }: ICommentOnQuestionUseCaseParams): Promise<CommentOnQuestionUseCaseResponse> {
     const question = await this.questionsRepository.findById(questionId)
-    if (!question) throw new Error('Pergunta não encontrada.')
+    if (!question) return left(new ResourceNotFoundError())
 
     const comment = QuestionComment.create({
       content,
@@ -32,6 +35,6 @@ export class CommentOnQuestionUseCase {
 
     await this.questionCommentsRepository.create(comment)
 
-    return { comment }
+    return right({ comment })
   }
 }

@@ -1,15 +1,20 @@
+import { Either, left, right } from '@/core/either'
+
 import { AnswersRepository } from '../repositories/answers-repository'
+import { NotAllowedError } from '../errors/not-allowed-error copy'
 import { Question } from '../../enterprise/entities/question'
 import { QuestionsRepository } from '../repositories/questions-repository'
+import { ResourceNotFoundError } from '../errors/resource-not-found-error'
 
 interface IChooseQuestionBestAnswerParams {
   authorId: string
   answerId: string
 }
 
-interface IChooseQuestionBestAnswerResponse {
-  question: Question
-}
+type ChooseQuestionBestAnswerResponse = Either<
+  ResourceNotFoundError | NotAllowedError,
+  { question: Question }
+>
 
 export class ChooseQuestionBestAnswerUseCase {
   constructor(
@@ -17,20 +22,19 @@ export class ChooseQuestionBestAnswerUseCase {
     private questionsRepository: QuestionsRepository
   ) { }
 
-  async execute({ authorId, answerId }: IChooseQuestionBestAnswerParams): Promise<IChooseQuestionBestAnswerResponse> {
+  async execute({ authorId, answerId }: IChooseQuestionBestAnswerParams): Promise<ChooseQuestionBestAnswerResponse> {
     const answerFound = await this.answersRepository.findById(answerId)
-    if (!answerFound) throw new Error('Resposta não encontrada.')
+    if (!answerFound) return left(new ResourceNotFoundError())
 
     const questionFound = await this.questionsRepository.findById(answerFound.questionId.toString())
-    if (!questionFound) throw new Error('Pergunta não encontrada.')
+    if (!questionFound) return left(new ResourceNotFoundError())
 
-    if (authorId !== questionFound.authorId.toString())
-      throw new Error('Não é permitido selecionar melhor resposta para perguntas de outros autores.')
+    if (authorId !== questionFound.authorId.toString()) return left(new NotAllowedError())
 
     questionFound.bestAnswerId = answerFound.id
 
     await this.questionsRepository.updateOne(questionFound.id.toString(), questionFound)
 
-    return { question: questionFound }
+    return right({ question: questionFound })
   }
 }

@@ -2,6 +2,8 @@ import { DeleteQuestionCommentUseCase } from './delete-question-comment'
 import { InMemoryQuestionCommentsRepository } from 'test/repositories/in-memory-question-comments-repository'
 import { faker } from '@faker-js/faker'
 import { makeQuestionComment } from 'test/factories/make-question-comment'
+import { NotAllowedError } from '../errors/not-allowed-error copy'
+import { ResourceNotFoundError } from '../errors/resource-not-found-error'
 
 let inMemoryQuestionCommentsRepository: InMemoryQuestionCommentsRepository
 
@@ -33,13 +35,17 @@ describe('Comment on question', () => {
 
     await inMemoryQuestionCommentsRepository.create(comment)
 
-    expect(async () => await SUT.execute({ questionCommentId: comment.id.toString(), authorId: faker.lorem.text() }))
-      .rejects.toThrowError('Não é permitido apagar comentários de outro usuário.')
+    const result = await SUT.execute({ questionCommentId: comment.id.toString(), authorId: faker.lorem.text() })
+
+    expect(result.isLeft()).toBe(true)
+    expect(result.value).toBeInstanceOf(NotAllowedError)
 
   })
 
-  it('should throw an error when the comment does not found', async () =>
-    expect(async () => await SUT.execute({ questionCommentId: faker.lorem.text(), authorId: faker.lorem.text() }))
-      .rejects.toThrowError('Comentário não encontrado.')
-  )
+  it('should throw an error when the comment does not found', async () => {
+    const result = await SUT.execute({ questionCommentId: faker.lorem.text(), authorId: faker.lorem.text() })
+
+    expect(result.isLeft()).toBe(true)
+    expect(result.value).toBeInstanceOf(ResourceNotFoundError)
+  })
 })

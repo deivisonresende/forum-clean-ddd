@@ -34,21 +34,34 @@ describe('Fetch answer comment', () => {
 
 
   it('should be able to fetch the comments of a answer', async () => {
-    const { comments } = await SUT.execute({ answerId, cursor: { page: 1 } })
+    const result = await SUT.execute({ answerId, cursor: { page: 1 } })
 
-    expect(comments).toHaveLength(3)
+    expect(result.isRight()).toBe(true)
+
+    if (result.isRight()) {
+      expect(result.value).toHaveProperty('comments')
+      expect(result.value.comments).toHaveLength(3)
+    }
   })
 
 
   it('should be able to fetch for a number of comments of a answer', async () => {
-    const { comments } = await SUT.execute({ answerId, cursor: { page: 1, amountItems: 2 } })
+    const result = await SUT.execute({ answerId, cursor: { page: 1, amountItems: 2 } })
 
-    expect(comments).toHaveLength(2)
+    expect(result.isRight()).toBe(true)
+    if (result.isRight()) {
+      expect(result.value).toHaveProperty('comments')
+      expect(result.value.comments).toHaveLength(2)
+    }
   })
 
   it('should return a empty list when there are no comments on the selected page', async () => {
-    const { comments } = await SUT.execute({ answerId, cursor: { page: 2 } })
-
-    expect(comments).toHaveLength(0)
+    const result = await SUT.execute({ answerId, cursor: { page: 2 } })
+  
+    expect(result.isRight()).toBe(true)
+    if (result.isRight()) {
+      expect(result.value).toHaveProperty('comments')
+      expect(result.value.comments).toHaveLength(0)
+    }
   })
 })

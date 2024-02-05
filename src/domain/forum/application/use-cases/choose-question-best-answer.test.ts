@@ -1,6 +1,8 @@
 import { ChooseQuestionBestAnswerUseCase } from './choose-question-best-answer'
 import { InMemoryAnswersRepository } from 'test/repositories/in-memory-answers-repository'
 import { InMemoryQuestionsRepository } from 'test/repositories/in-memory-questions-repository'
+import { NotAllowedError } from '../errors/not-allowed-error copy'
+import { ResourceNotFoundError } from '../errors/resource-not-found-error'
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
 import { faker } from '@faker-js/faker'
 import { makeAnswer } from 'test/factories/make-answer'
@@ -38,16 +40,21 @@ describe('Answer question use case', () => {
     expect(inMemoryQuestionsRepository.items[0].bestAnswerId?.toString()).toEqual(bestAnswer.id.toString())
   })
 
-  it('should throw an error when the answer does not found', async () =>
-    expect(async () => await SUT.execute({ answerId: faker.lorem.text(), authorId: new UniqueEntityID().toString() }))
-      .rejects.toThrowError('Resposta não encontrada.')
-  )
+  it('should throw an error when the answer does not found', async () => {
+    const result = await SUT.execute({ answerId: faker.lorem.text(), authorId: new UniqueEntityID().toString() })
+
+    expect(result.isLeft()).toBe(true)
+    expect(result.value).toBeInstanceOf(ResourceNotFoundError)
+  })
+
 
   it('should throw an error when the question does not found', async () => {
     const answer = await inMemoryAnswersRepository.create(makeAnswer())
 
-    expect(async () => await SUT.execute({ answerId: answer.id.toString(), authorId: new UniqueEntityID().toString() }))
-      .rejects.toThrowError('Pergunta não encontrada.')
+    const result = await SUT.execute({ answerId: answer.id.toString(), authorId: new UniqueEntityID().toString() })
+
+    expect(result.isLeft()).toBe(true)
+    expect(result.value).toBeInstanceOf(ResourceNotFoundError)
   })
 
   it('should NOT be able to to choose the best answer for a question of another authors', async () => {
@@ -61,8 +68,10 @@ describe('Answer question use case', () => {
       answerId: answer.id.toString()
     })
 
-    expect(async () => await SUT.execute({ answerId: answer.id.toString(), authorId: new UniqueEntityID().toString() }))
-      .rejects.toThrowError('Não é permitido selecionar melhor resposta para perguntas de outros autores.')
+    const result = await SUT.execute({ answerId: answer.id.toString(), authorId: new UniqueEntityID().toString() })
+
+    expect(result.isLeft()).toBe(true)
+    expect(result.value).toBeInstanceOf(NotAllowedError)
   })
 })
 

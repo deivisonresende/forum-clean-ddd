@@ -32,21 +32,36 @@ describe('Get question by slug use case', () => {
 
 
   it('should be able to fetch the answers of a question', async () => {
-    const { answers } = await SUT.execute({ questionId, cursor: { page: 1 } })
+    const result = await SUT.execute({ questionId, cursor: { page: 1 } })
 
-    expect(answers).toHaveLength(3)
+    expect(result.isRight()).toBe(true)
+
+    if (result.isRight()) {
+      expect(result.value).toHaveProperty('answers')
+      expect(result.value.answers).toHaveLength(3)
+    }
   })
 
 
   it('should be able to fetch for a number of answers of a question', async () => {
-    const { answers } = await SUT.execute({ questionId, cursor: { page: 1, amountItems: 2 } })
+    const result = await SUT.execute({ questionId, cursor: { page: 1, amountItems: 2 } })
 
-    expect(answers).toHaveLength(2)
+    expect(result.isRight()).toBe(true)
+
+    if (result.isRight()) {
+      expect(result.value).toHaveProperty('answers')
+      expect(result.value.answers).toHaveLength(2)
+    }
   })
 
   it('should return a empty list when there are no answers on the selected page', async () => {
-    const { answers } = await SUT.execute({ questionId, cursor: { page: 2 } })
+    const result = await SUT.execute({ questionId, cursor: { page: 2 } })
 
-    expect(answers).toHaveLength(0)
+    expect(result.isRight()).toBe(true)
+
+    if (result.isRight()) {
+      expect(result.value).toHaveProperty('answers')
+      expect(result.value.answers).toHaveLength(0)
+    }
   })
 })

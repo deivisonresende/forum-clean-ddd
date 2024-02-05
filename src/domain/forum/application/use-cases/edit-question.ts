@@ -1,5 +1,9 @@
+import { Either, left, right } from '@/core/either'
+
+import { NotAllowedError } from '../errors/not-allowed-error copy'
 import { Question } from '../../enterprise/entities/question'
 import { QuestionsRepository } from '../repositories/questions-repository'
+import { ResourceNotFoundError } from '../errors/resource-not-found-error'
 
 interface IEditQuestionUseCaseParams {
   authorId: string
@@ -8,27 +12,27 @@ interface IEditQuestionUseCaseParams {
   content: string
 }
 
-interface IEditQuestionUseCaseResponse {
-  question: Question
-}
+type EditQuestionUseCaseResponse = Either<
+  ResourceNotFoundError | NotAllowedError,
+  { question: Question }
+>
 
 export class EditQuestionUseCase {
   constructor(private questionsRepository: QuestionsRepository) { }
 
-  async execute(params: IEditQuestionUseCaseParams): Promise<IEditQuestionUseCaseResponse> {
+  async execute(params: IEditQuestionUseCaseParams): Promise<EditQuestionUseCaseResponse> {
     const { authorId, questionId, title, content } = params
 
     const questionFound = await this.questionsRepository.findById(questionId)
-    if (!questionFound) throw new Error('Pergunta não encontrada.')
+    if (!questionFound) return left(new ResourceNotFoundError())
 
-    if (authorId !== questionFound.authorId.toString())
-      throw new Error('Não é permitido editar perguntas de outros autores.')
+    if (authorId !== questionFound.authorId.toString()) return left(new NotAllowedError())
 
     questionFound.title = title
     questionFound.content = content
 
     await this.questionsRepository.updateOne(questionId, questionFound)
 
-    return { question: questionFound }
+    return right({ question: questionFound })
   }
 }

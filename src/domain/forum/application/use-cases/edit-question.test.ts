@@ -4,6 +4,8 @@ import { Slug } from '../../enterprise/entities/value-objects/slug'
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
 import { faker } from '@faker-js/faker'
 import { makeQuestion } from 'test/factories/make-question'
+import { ResourceNotFoundError } from '../errors/resource-not-found-error'
+import { NotAllowedError } from '../errors/not-allowed-error copy'
 
 let inMemoryQuestionsRepository: InMemoryQuestionsRepository
 let SUT: EditQuestionUseCase
@@ -56,9 +58,10 @@ describe('Edit question use case', () => {
       content: faker.lorem.paragraph()
     }
 
-    expect(async () => await SUT.execute(params))
-      .rejects
-      .toThrow('Não é permitido editar perguntas de outros autores.')
+    const result = await SUT.execute(params)
+
+    expect(result.isLeft()).toBe(true)
+    expect(result.value).toBeInstanceOf(NotAllowedError)
   })
 
   it('should throw an error when the question does not found', async () => {
@@ -69,9 +72,10 @@ describe('Edit question use case', () => {
       content: faker.lorem.paragraph()
     }
 
-    expect(async () => await SUT.execute(params))
-      .rejects
-      .toThrowError('Pergunta não encontrada.')
+    const result = await SUT.execute(params)
+
+    expect(result.isLeft()).toBe(true)
+    expect(result.value).toBeInstanceOf(ResourceNotFoundError)
   })
 })
 

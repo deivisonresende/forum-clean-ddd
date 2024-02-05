@@ -1,21 +1,32 @@
+import { Either, left, right } from '@/core/either'
+
+import { NotAllowedError } from '../errors/not-allowed-error copy'
 import { QuestionCommentsRepository } from '../repositories/question-comments-repository'
+import { ResourceNotFoundError } from '../errors/resource-not-found-error'
 
 interface IDeleteQuestionCommentUseCaseParams {
   authorId: string
   questionCommentId: string
 }
 
+type DeleteQuestionCommentUseCaseResponse = Either<
+  ResourceNotFoundError | NotAllowedError,
+  NonNullable<object>
+>
+
 export class DeleteQuestionCommentUseCase {
   constructor(
     private questionCommentsRepository: QuestionCommentsRepository
   ) { }
 
-  async execute({ authorId, questionCommentId }: IDeleteQuestionCommentUseCaseParams): Promise<void> {
+  async execute({ authorId, questionCommentId }: IDeleteQuestionCommentUseCaseParams): Promise<DeleteQuestionCommentUseCaseResponse> {
     const comment = await this.questionCommentsRepository.findById(questionCommentId)
-    if (!comment) throw new Error('Comentário não encontrado.')
+    if (!comment) return left(new ResourceNotFoundError())
 
-    if(comment.authorId.toString() !== authorId) throw new Error('Não é permitido apagar comentários de outro usuário.')
+    if (comment.authorId.toString() !== authorId) return left(new NotAllowedError())
 
-    return await this.questionCommentsRepository.deleteOne(questionCommentId)
+    await this.questionCommentsRepository.deleteOne(questionCommentId)
+
+    return right({})
   }
 }
