@@ -3,6 +3,7 @@ import { Either, left, right } from '@/core/either';
 import { AnswersRepository } from '../repositories/answers-repository'
 import { NotAllowedError } from '../errors/not-allowed-error copy';
 import { ResourceNotFoundError } from '../errors/resource-not-found-error';
+import { AnswerAttachmentsRepository } from '../repositories/answer-attachments-repository';
 
 interface IDeleteAnswerUseCaseParams {
   authorId: string;
@@ -15,15 +16,19 @@ type DeleteAnswerUseCaseResponse = Either<
 >
 
 export class DeleteAnswerUseCase {
-  constructor(private questionsRepository: AnswersRepository) { }
+  constructor(
+    private answersRepository: AnswersRepository,
+    private answerAttachmentsRepository : AnswerAttachmentsRepository
+    ) { }
 
   async execute({ authorId, answerId }: IDeleteAnswerUseCaseParams): Promise<DeleteAnswerUseCaseResponse> {
-    const questionFound = await this.questionsRepository.findById(answerId)
-    if (!questionFound) return left(new ResourceNotFoundError())
+    const answerFound = await this.answersRepository.findById(answerId)
+    if (!answerFound) return left(new ResourceNotFoundError())
 
-    if (authorId !== questionFound.authorId.toString()) return left(new NotAllowedError())
+    if (authorId !== answerFound.authorId.toString()) return left(new NotAllowedError())
 
-    await this.questionsRepository.deleteOne(answerId)
+    await this.answersRepository.deleteOne(answerId)
+    await this.answerAttachmentsRepository.deleteManyByAnswerId(answerId)
 
     return right({})
   }

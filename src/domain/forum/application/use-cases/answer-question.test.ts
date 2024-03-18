@@ -5,6 +5,7 @@ import { ResourceNotFoundError } from '../errors/resource-not-found-error'
 import { expect } from 'vitest'
 import { faker } from '@faker-js/faker'
 import { makeQuestion } from 'test/factories/make-question'
+import { UniqueEntityID } from '@/core/entities/unique-entity-id'
 
 let inMemoryAnswersRepository: InMemoryAnswersRepository
 let inMemoryQuestionsRepository: InMemoryQuestionsRepository
@@ -23,10 +24,14 @@ describe('Answer question use case', () => {
 
     const question = await inMemoryQuestionsRepository.create(newQuestion)
 
+    const content = faker.lorem.words({ min: 120, max: 130 })
+
     const result = await SUT.execute({
       questionId: question.id.toString(),
       authorId: 'author',
-      content: 'new answer'
+      content,
+
+      attachmentIds: ['1', '2']
     })
 
     expect(result.isRight()).toBe(true)
@@ -41,11 +46,21 @@ describe('Answer question use case', () => {
       expect(inMemoryAnswersRepository.items[0].questionId.toString()).toEqual(result.value.answer.questionId.toString())
       expect(inMemoryAnswersRepository.items[0]).toHaveProperty('content')
       expect(inMemoryAnswersRepository.items[0].content).toEqual(result.value.answer.content)
+      expect(inMemoryAnswersRepository.items[0]).toHaveProperty('excerpt')
+      expect(inMemoryAnswersRepository.items[0].excerpt).toEqual(result.value.answer.excerpt)
+      expect(inMemoryAnswersRepository.items[0].attachments.currentItems).toEqual([
+        expect.objectContaining({ attachmentId: new UniqueEntityID('1') }),
+        expect.objectContaining({ attachmentId: new UniqueEntityID('2') })
+      ])
+      expect(inMemoryAnswersRepository.items[0]).toHaveProperty('createdAt')
+      expect(inMemoryAnswersRepository.items[0].createdAt).toEqual(result.value.answer.createdAt)
+      expect(inMemoryAnswersRepository.items[0]).toHaveProperty('updatedAt')
+      expect(inMemoryAnswersRepository.items[0].updatedAt).toEqual(result.value.answer.updatedAt)
     }
   })
 
   it('should throw an error when the question does not found', async () => {
-    const result = await SUT.execute({ questionId: faker.lorem.text(), authorId: '1', content: 'new answer' })
+    const result = await SUT.execute({ questionId: faker.lorem.text(), authorId: '1', content: 'new answer', attachmentIds: [] })
 
     expect(result.isLeft()).toBe(true)
     expect(result.value).toBeInstanceOf(ResourceNotFoundError)
