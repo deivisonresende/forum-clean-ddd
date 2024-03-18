@@ -5,14 +5,19 @@ import { faker } from '@faker-js/faker'
 import { makeQuestion } from 'test/factories/make-question'
 import { NotAllowedError } from '../errors/not-allowed-error copy'
 import { ResourceNotFoundError } from '../errors/resource-not-found-error'
+import { makeQuestionAttachment } from 'test/factories/make-question-attachment'
+import { InMemoryQuestionAttachmentsRepository } from 'test/repositories/in-memory-question-attachments-repository'
 
 let inMemoryQuestionsRepository: InMemoryQuestionsRepository
+let inMemoryQuestionAttachmentsRepository: InMemoryQuestionAttachmentsRepository
 let SUT: DeleteQuestionUseCase
 
 describe('Delete Question Use Case', () => {
   beforeEach(() => {
     inMemoryQuestionsRepository = new InMemoryQuestionsRepository()
-    SUT = new DeleteQuestionUseCase(inMemoryQuestionsRepository)
+    inMemoryQuestionAttachmentsRepository = new InMemoryQuestionAttachmentsRepository()
+
+    SUT = new DeleteQuestionUseCase(inMemoryQuestionsRepository, inMemoryQuestionAttachmentsRepository)
   })
 
   it('should be able to delete a question by id', async () => {
@@ -20,12 +25,20 @@ describe('Delete Question Use Case', () => {
 
     inMemoryQuestionsRepository.create(question)
 
+    const questionId = question.id
+
+    inMemoryQuestionAttachmentsRepository.items.push(
+      makeQuestionAttachment({ questionId, attachmentId: new UniqueEntityID('1') }),
+      makeQuestionAttachment({ questionId, attachmentId: new UniqueEntityID('2') }),
+    )
+
     const countQuestionsBefore = inMemoryQuestionsRepository.items.length
 
     await SUT.execute({ questionId: question.id.toString(), authorId: 'author-1' })
 
     expect(countQuestionsBefore).toBe(1)
     expect(inMemoryQuestionsRepository.items).toHaveLength(0)
+    expect(inMemoryQuestionAttachmentsRepository.items).toHaveLength(0)
   })
 
 
@@ -46,5 +59,4 @@ describe('Delete Question Use Case', () => {
     expect(result.isLeft()).toBe(true)
     expect(result.value).toBeInstanceOf(ResourceNotFoundError)
   }) 
-
 })
