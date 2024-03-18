@@ -1,7 +1,6 @@
 import { CommentOnAnswerUseCase } from './comment-on-answer'
 import { InMemoryAnswerCommentsRepository } from 'test/repositories/in-memory-answer-comments-repository'
 import { InMemoryAnswersRepository } from 'test/repositories/in-memory-answers-repository'
-import { NotAllowedError } from '../errors/not-allowed-error copy'
 import { ResourceNotFoundError } from '../errors/resource-not-found-error'
 import { faker } from '@faker-js/faker'
 import { makeAnswer } from 'test/factories/make-answer'
